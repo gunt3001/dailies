@@ -5,6 +5,9 @@
 <div class="calendar">
     <div class="command-bar">
         <div class="form-row">
+            <div class="col-auto">
+                <button type="button" class="btn btn-light btn-lg mt-3" @onclick="@(e => currentMonth--)">&#60;</button>
+            </div>
             <div class="col">
                 <input type="number" class="header form-control-plaintext font-weight-bolder" id="calendar-year" @bind="@currentYear">
             </div>
@@ -16,6 +19,9 @@
                         <option value="@i">@name</option>
                     }
                 </select>
+            </div>
+            <div class="col-auto">
+                <button type="button" class="btn btn-light btn-lg mt-3" @onclick="@(e => currentMonth++)">&#62;</button>
             </div>
         </div>
     </div>
@@ -43,6 +49,14 @@
         }
         set {
             _currentMonth = value;
+            if (_currentMonth == 13) {
+                _currentYear += 1;
+                _currentMonth = 1;
+            }
+            else if (_currentMonth == 0 && _currentYear != 0) {
+                _currentYear -= 1;
+                _currentMonth = 12;
+            }
             TriggerCalendarUpdateAsync();
         }
      }
