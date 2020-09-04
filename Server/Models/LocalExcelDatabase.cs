@@ -59,7 +59,10 @@ namespace dailies.Server.Models
                 var dateCell = table.GetCellValue(row, table.DateColIndex);
                 if (dateCell is DateTime entryDate && entryDate.Date >= startDate.Date && entryDate.Date <= endDate)
                 {
-                    yield return CreateEntryAtRowIndex(table, entryDate, row);
+                    var entry = CreateEntryAtRowIndex(table, entryDate, row);
+                    if (entry != null) {
+                        yield return entry;
+                    }
                 }
             }
         }
