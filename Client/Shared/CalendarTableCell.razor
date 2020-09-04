@@ -1,0 +1,29 @@
+<td class="@(IsOfCurrentMonth ? "" : "text-black-50")">
+    <p>@Date.Day <small>@GetDaysAgoString()</small></p>
+    <p>@Content</p>
+</td>
+
+@code {
+    [Parameter]
+    public DateTime Date { get; set; }
+
+    [Parameter]
+    public bool IsOfCurrentMonth { get; set; }
+
+    [Parameter]
+    public string Content { get; set; }
+
+    private int DaysAgo => (int)(DateTime.Today - Date.Date).TotalDays;
+
+    private string GetDaysAgoString() {
+        if (DaysAgo > 0) {
+            return $"– {DaysAgo} day{(DaysAgo == 1 ? "" : "s")} ago";
+        }
+        else if (DaysAgo == 0) {
+            return "– Today";
+        }
+        else {
+            return "";
+        }
+    }
+}

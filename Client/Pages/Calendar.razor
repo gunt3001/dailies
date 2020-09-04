@@ -1,0 +1,95 @@
+﻿@page "/calendar"
+@using System.Globalization
+@inject HttpClient Http
+
+<div class="calendar">
+    <div class="command-bar">
+        <div class="form-row">
+            <div class="col">
+                <input type="number" class="header form-control-plaintext font-weight-bolder" id="calendar-year" @bind="@currentYear">
+            </div>
+            <div class="col">
+                <select id="inputState" class="form-control-plaintext" @bind="@currentMonth">
+                    @for (int i = 1; i <= 12; i++)
+                    {
+                        var name = DateTimeFormatInfo.CurrentInfo.GetMonthName(i);
+                        <option value="@i">@name</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <CalendarTable CurrentMonth="@currentMonth" CurrentYear="@currentYear" Contents="@Contents" />
+    </div>
+</div>
+
+@code {
+    private int _currentYear = 0;
+    private int currentYear {
+        get {
+            return _currentYear;
+        }
+        set {
+            _currentYear = value;
+            TriggerCalendarUpdateAsync();
+        }
+    }
+    private int _currentMonth = 0;
+    private int currentMonth { 
+        get {
+            return _currentMonth;
+        }
+        set {
+            _currentMonth = value;
+            TriggerCalendarUpdateAsync();
+        }
+     }
+
+    private List<(int year, int month)> FetchedMonths { get; set; } = new List<(int year, int month)>();
+    private Dictionary<DateTime, string> Contents { get; set; } = new Dictionary<DateTime, string>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        currentYear = DateTime.Today.Year;
+        currentMonth = DateTime.Today.Month;
+    }
+
+    private async Task TriggerCalendarUpdateAsync() {
+        if (currentYear == 0 || currentMonth == 0) return;
+        await GetContentsToDisplayForMonthAsync(currentYear, currentMonth);
+        StateHasChanged();
+    }
+
+    /// Fetch data for given month and adjacent ones
+    private async Task GetContentsToDisplayForMonthAsync(int year, int month)
+    {
+        await FetchContentsForMonthAsync(year, month);
+        
+        var prevMonth = new DateTime(year, month, 1).AddMonths(-1);
+        await FetchContentsForMonthAsync(prevMonth.Year, prevMonth.Month);
+
+        var nextMonth = new DateTime(year, month, 1).AddMonths(1);
+        await FetchContentsForMonthAsync(nextMonth.Year, nextMonth.Month);
+    }
+
+    private async Task FetchContentsForMonthAsync(int year, int month) {
+
+        // Do nothing if we have previously fetched that data
+        if (FetchedMonths.Any(x => x.year == year && x.month == month)) return;
+        
+        var uri = new UriBuilder("Entries");
+        var startDate = $"{year:D4}-{month:D2}-01";
+        var endDate = $"{year:D4}-{month:D2}-{DateTime.DaysInMonth(year, month)}";
+        var fetchedData = await Http.GetFromJsonAsync<dailies.Shared.Entry[]>($"Entries?start={startDate}&end={endDate}");
+        
+        foreach (var entry in fetchedData)
+        {
+            Contents.Add(entry.Date.Date, entry.Content);
+        }
+
+        // Mark as fetched
+        FetchedMonths.Add((year, month));
+    }
+}

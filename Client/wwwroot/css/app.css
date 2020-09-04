@@ -1,7 +1,7 @@
 ﻿@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 
 html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
 a, .btn-link {
@@ -180,4 +180,12 @@ app {
         /* Never collapse the sidebar for wide screens */
         display: block;
     }
+}
+
+.calendar .command-bar input, .calendar .command-bar select {
+    font-size: 3em;
+}
+
+table.calendar-table {
+    width: 100%;
 }
