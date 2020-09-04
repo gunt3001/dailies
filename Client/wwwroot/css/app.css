@@ -188,4 +188,9 @@ app {
 
 table.calendar-table {
     width: 100%;
+    table-layout: fixed;
+}
+
+table.calendar-table tbody tr {
+    height: 8em;
 }
