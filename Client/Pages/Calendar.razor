@@ -80,12 +80,15 @@
     private async Task GetContentsToDisplayForMonthAsync(int year, int month)
     {
         await FetchContentsForMonthAsync(year, month);
-        
-        var prevMonth = new DateTime(year, month, 1).AddMonths(-1);
-        await FetchContentsForMonthAsync(prevMonth.Year, prevMonth.Month);
 
-        var nextMonth = new DateTime(year, month, 1).AddMonths(1);
-        await FetchContentsForMonthAsync(nextMonth.Year, nextMonth.Month);
+        // Query adjacent months in after current one is finished
+        var now = new DateTime(year, month, 1);
+        var prevMonth = now.AddMonths(-1);
+        var nextMonth = now.AddMonths(1);
+        var prevMonthTask = FetchContentsForMonthAsync(prevMonth.Year, prevMonth.Month);
+        var nextMonthTask = FetchContentsForMonthAsync(nextMonth.Year, nextMonth.Month);
+
+        await Task.WhenAll(prevMonthTask, nextMonthTask);                
     }
 
     private async Task FetchContentsForMonthAsync(int year, int month) {
