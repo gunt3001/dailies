@@ -26,7 +26,8 @@ namespace dailies.Server
 
             services.AddControllersWithViews();
             services.AddRazorPages();
-            services.AddSingleton<IDatabase>(new LocalExcelDatabase(Configuration["LocalExcelPath"]));
+            services.AddDbContext<EntriesContext>();
+            services.AddScoped<IDatabase, LocalSqliteDatabase>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
