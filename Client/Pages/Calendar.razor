@@ -93,11 +93,7 @@
         // Do nothing if we have previously fetched that data
         if (FetchedMonths.Any(x => x.year == year && x.month == month)) return;
         
-        var uri = new UriBuilder("Entries");
-        var startDate = $"{year:D4}-{month:D2}-01";
-        var endDate = $"{year:D4}-{month:D2}-{DateTime.DaysInMonth(year, month)}";
-        var fetchedData = await Http.GetFromJsonAsync<dailies.Shared.Entry[]>($"Entries?start={startDate}&end={endDate}");
-        
+        var fetchedData = await Http.GetFromJsonAsync<dailies.Shared.Entry[]>($"Entries?year={year}&month={month}");        
         foreach (var entry in fetchedData)
         {
             Contents.Add(entry.Date.Date, entry.Content);

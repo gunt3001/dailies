@@ -42,16 +42,19 @@ namespace dailies.Server.Controllers
         [Route("")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult<IEnumerable<Entry>> GetEntries(string start, string end)
+        public ActionResult<IEnumerable<Entry>> GetEntries(int year, int month)
         {
-            var startDate = TryParseDate(start);
-            var endDate = TryParseDate(end);
-
-            if (startDate == null || endDate == null)
+            // Validate year-month range
+            try
             {
-                return BadRequest();
+                new DateTime(year, month, 1);
             }
-            return Ok(Database.GetEntries(startDate.Value, endDate.Value));
+            catch (ArgumentOutOfRangeException)
+            {
+                return BadRequest("Invalid year and month provided");
+            }
+
+            return Ok(Database.GetEntries(year, month));
         }
 
         [HttpPut]
