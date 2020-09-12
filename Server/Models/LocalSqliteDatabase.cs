@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using dailies.Shared;
+using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
 
 namespace dailies.Server.Models
 {
@@ -16,7 +18,18 @@ namespace dailies.Server.Models
 
         public AddEntryResult AddEntry(Entry newEntry)
         {
-            throw new NotImplementedException();
+            Db.Add(newEntry);
+            try
+            {
+                Db.SaveChanges();
+            }
+            // Sqlite will throw with error code 19 on insert with duplicate key (same date)
+            catch (DbUpdateException e) when ((e.InnerException as SqliteException)?.SqliteErrorCode == 19)
+            {
+                return AddEntryResult.EntryExists;
+            }
+
+            return AddEntryResult.Success;
         }
 
         public IEnumerable<Entry> GetEntries(DateTime startDate, DateTime endDate)
@@ -32,12 +45,19 @@ namespace dailies.Server.Models
 
         public Entry GetEntry(DateTime date)
         {
-            throw new NotImplementedException();
+            return Db.Entries.Find(date);
         }
 
         public bool UpdateEntry(Entry entry)
         {
-            throw new NotImplementedException();
+            var existingEntry = GetEntry(entry.Date);
+            if (existingEntry == null)
+            {
+                return false;
+            }
+            Db.Entries.Update(entry);
+            Db.SaveChanges();
+            return true;
         }
     }
 }
