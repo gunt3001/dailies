@@ -1,0 +1,59 @@
+@using Models
+@inject DateUtilities DateUtilities;
+
+<form>
+  <div class="form-group">
+    <h2>@Date?.ToLongDateString()</h2>
+    <small>@RelativeDateString</small>
+  </div>
+  <div class="form-group">
+    <div class="input-group">
+      <div class="input-group-prepend">
+        <button class="btn btn-outline-secondary" type="button" @onclick="@(e => MoveDate(-1))">&#60;</button>
+      </div>
+      <input type="date" class="form-control" id="entryDate" placeholder="Entry date" @bind="@Date">
+      <div class="input-group-append">
+        <button class="btn btn-outline-secondary" type="button" @onclick="@(e => MoveDate(1))">&#62;</button>
+      </div>
+    </div>
+  </div>
+  <div class="form-group">
+    <textarea class="form-control @(IsContentBeyondMaxLength ? "is-invalid" : "")" id="entryContent" placeholder="Say what's going on..." rows="3" @bind="@Content" @bind:event="oninput"/>
+    <small class="@(IsContentBeyondMaxLength ? "text-danger" : "")">@CurrentContentLength / @MaxContentLength</small>
+  </div>
+  <div class="form-row">
+    <div class="col">
+      <label for="entryKeyword">Keyword</label>
+      <input type="text" id="entryKeyword" class="form-control" placeholder="Keyword">
+    </div>
+    <div class="col">
+      <label for="entryMood">Mood</label>
+      <input type="text" id="entryMood" class="form-control" placeholder="Mood">
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="entryRemarks">Remarks</label>
+    <textarea class="form-control" id="entryRemarks" placeholder="Remarks" rows="5"/>
+  </div>
+  <button type="submit" class="btn btn-primary">Save</button>
+</form>
+
+@code {
+  
+  private string Content { get; set; }
+  private int CurrentContentLength => Content?.Length ?? 0;
+  private bool IsContentBeyondMaxLength => CurrentContentLength > MaxContentLength;
+
+  [Parameter]
+  public DateTime? Date { get; set; } = DateTime.Today;
+
+  [Parameter]
+  public int MaxContentLength { get; set; } = 120;
+
+  private string RelativeDateString => Date == null ? null : DateUtilities.GetRelativeDateFromToday(Date.Value);
+
+  private void MoveDate(int offset) {
+    if (Date == null) return;
+    Date = Date.Value.AddDays(offset);
+  }
+}

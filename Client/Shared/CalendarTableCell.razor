@@ -1,4 +1,6 @@
 @using dailies.Shared
+@using Models
+@inject DateUtilities DateUtilities;
 
 <td class="@(IsOfCurrentMonth ? "" : "text-black-50")">
     @if (IsLoading)
@@ -29,21 +31,8 @@
     [Parameter]
     public bool IsLoading { get; set; }
 
-    private int DaysAgo => (int)(DateTime.Today - Date.Date).TotalDays;
-
     private string GetDaysAgoString()
     {
-        if (DaysAgo > 0)
-        {
-            return $"– {DaysAgo} day{(DaysAgo == 1 ? "" : "s")} ago";
-        }
-        else if (DaysAgo == 0)
-        {
-            return "– Today";
-        }
-        else
-        {
-            return "";
-        }
+        return $"- {DateUtilities.GetRelativeDateFromToday(Date)}";
     }
 }
