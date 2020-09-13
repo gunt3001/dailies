@@ -1,6 +1,19 @@
+@using dailies.Shared
+
 <td class="@(IsOfCurrentMonth ? "" : "text-black-50")">
-    <p>@Date.Day <small>@GetDaysAgoString()</small></p>
-    <p>@Content</p>
+    @if (IsLoading)
+    {
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+    }
+    else
+    {
+        <p>@Date.Day <small>@GetDaysAgoString()</small></p>
+        <p>@Entry?.Content</p>
+    }
 </td>
 
 @code {
@@ -11,18 +24,25 @@
     public bool IsOfCurrentMonth { get; set; }
 
     [Parameter]
-    public string Content { get; set; }
+    public Entry Entry { get; set; }
+
+    [Parameter]
+    public bool IsLoading { get; set; }
 
     private int DaysAgo => (int)(DateTime.Today - Date.Date).TotalDays;
 
-    private string GetDaysAgoString() {
-        if (DaysAgo > 0) {
+    private string GetDaysAgoString()
+    {
+        if (DaysAgo > 0)
+        {
             return $"– {DaysAgo} day{(DaysAgo == 1 ? "" : "s")} ago";
         }
-        else if (DaysAgo == 0) {
+        else if (DaysAgo == 0)
+        {
             return "– Today";
         }
-        else {
+        else
+        {
             return "";
         }
     }

@@ -1,5 +1,7 @@
 ﻿@page "/calendar"
 @using System.Globalization
+@using dailies.Shared
+
 @inject HttpClient Http
 
 <div class="calendar">
@@ -27,7 +29,7 @@
     </div>
 
     <div>
-        <CalendarTable CurrentMonth="@currentMonth" CurrentYear="@currentYear" Contents="@Contents" />
+        <CalendarTable CurrentMonth="@currentMonth" CurrentYear="@currentYear" Contents="@Contents" FetchedMonths="@FetchedMonths" />
     </div>
 </div>
 
@@ -62,7 +64,7 @@
      }
 
     private List<(int year, int month)> FetchedMonths { get; set; } = new List<(int year, int month)>();
-    private Dictionary<DateTime, string> Contents { get; set; } = new Dictionary<DateTime, string>();
+    private Dictionary<DateTime, Entry> Contents { get; set; } = new Dictionary<DateTime, Entry>();
 
     protected override async Task OnInitializedAsync()
     {
@@ -96,10 +98,10 @@
         // Do nothing if we have previously fetched that data
         if (FetchedMonths.Any(x => x.year == year && x.month == month)) return;
         
-        var fetchedData = await Http.GetFromJsonAsync<dailies.Shared.Entry[]>($"Entries?year={year}&month={month}");        
+        var fetchedData = await Http.GetFromJsonAsync<Entry[]>($"Entries?year={year}&month={month}");        
         foreach (var entry in fetchedData)
         {
-            Contents.Add(entry.Date.Date, entry.Content);
+            Contents.Add(entry.Date.Date, entry);
         }
 
         // Mark as fetched

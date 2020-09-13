@@ -1,3 +1,5 @@
+@using dailies.Shared
+
 <table class="calendar-table table table-bordered">
     <thead>
         <tr>
@@ -25,7 +27,9 @@
                         {
                             var date = dayToDisplay.AddDays(i);
                             var isOfCurrentMonth = date.Year == CurrentYear && date.Month == CurrentMonth;
-                            <CalendarTableCell Date="@date" IsOfCurrentMonth="@isOfCurrentMonth" Content="@GetContentForDate(date)"/>
+                            var entry = GetEntryForDate(date);
+                            var dataLoaded = FetchedMonths.Any(x => x.year == CurrentYear && x.month == CurrentMonth);
+                            <CalendarTableCell Date="@date" IsOfCurrentMonth="@isOfCurrentMonth" Entry="@entry" IsLoading="@(!dataLoaded)"/>
                         }
                     </tr>
                     dayToDisplay = dayToDisplay.AddDays(7);
@@ -40,11 +44,13 @@
     public int CurrentMonth { get; set; }
     [Parameter]
     public int CurrentYear { get; set; }
+    [Parameter]
+    public List<(int year, int month)> FetchedMonths { get; set; }
 
     [Parameter]
-    public Dictionary<DateTime, string> Contents { get; set; }
+    public Dictionary<DateTime, Entry> Contents { get; set; }
 
-    private string GetContentForDate(DateTime date) {
+    private Entry GetEntryForDate(DateTime date) {
         if (Contents.ContainsKey(date)) return Contents[date];
         return null;
     }
