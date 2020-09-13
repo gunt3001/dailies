@@ -1,5 +1,4 @@
 @using Models
-@inject DateUtilities DateUtilities;
 
 <form>
   <div class="form-group">
@@ -24,36 +23,16 @@
   <div class="form-row">
     <div class="col">
       <label for="entryKeyword">Keyword</label>
-      <input type="text" id="entryKeyword" class="form-control" placeholder="Keyword">
+      <input type="text" id="entryKeyword" class="form-control" placeholder="Keyword" @bind="@Keyword">
     </div>
     <div class="col">
       <label for="entryMood">Mood</label>
-      <input type="text" id="entryMood" class="form-control" placeholder="Mood">
+      <input type="text" id="entryMood" class="form-control" placeholder="Mood" @bind="@Mood">
     </div>
   </div>
   <div class="form-group">
     <label for="entryRemarks">Remarks</label>
-    <textarea class="form-control" id="entryRemarks" placeholder="Remarks" rows="5"/>
+    <textarea class="form-control" id="entryRemarks" placeholder="Remarks" rows="5" @bind="@Remarks"/>
   </div>
   <button type="submit" class="btn btn-primary">Save</button>
 </form>
-
-@code {
-  
-  private string Content { get; set; }
-  private int CurrentContentLength => Content?.Length ?? 0;
-  private bool IsContentBeyondMaxLength => CurrentContentLength > MaxContentLength;
-
-  [Parameter]
-  public DateTime? Date { get; set; } = DateTime.Today;
-
-  [Parameter]
-  public int MaxContentLength { get; set; } = 120;
-
-  private string RelativeDateString => Date == null ? null : DateUtilities.GetRelativeDateFromToday(Date.Value);
-
-  private void MoveDate(int offset) {
-    if (Date == null) return;
-    Date = Date.Value.AddDays(offset);
-  }
-}
