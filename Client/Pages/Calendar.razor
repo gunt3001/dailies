@@ -1,8 +1,9 @@
 ﻿@page "/calendar"
 @using System.Globalization
 @using dailies.Shared
+@using Models
 
-@inject HttpClient Http
+@inject EntriesManager EntriesManager
 
 <div class="calendar">
     <div class="command-bar">
@@ -29,7 +30,7 @@
     </div>
 
     <div>
-        <CalendarTable CurrentMonth="@currentMonth" CurrentYear="@currentYear" Contents="@Contents" FetchedMonths="@FetchedMonths" />
+        <CalendarTable CurrentMonth="@currentMonth" CurrentYear="@currentYear" Contents="@EntriesManager.Entries" FetchedMonths="@EntriesManager.FetchedMonths" />
     </div>
 </div>
 
@@ -63,9 +64,6 @@
         }
      }
 
-    private List<(int year, int month)> FetchedMonths { get; set; } = new List<(int year, int month)>();
-    private Dictionary<DateTime, Entry> Contents { get; set; } = new Dictionary<DateTime, Entry>();
-
     protected override async Task OnInitializedAsync()
     {
         currentYear = DateTime.Today.Year;
@@ -74,37 +72,7 @@
 
     private async Task TriggerCalendarUpdateAsync() {
         if (currentYear == 0 || currentMonth == 0) return;
-        await GetContentsToDisplayForMonthAsync(currentYear, currentMonth);
+        await EntriesManager.FetchEntriesToDisplayForMonthAsync(currentYear, currentMonth);
         StateHasChanged();
-    }
-
-    /// Fetch data for given month and adjacent ones
-    private async Task GetContentsToDisplayForMonthAsync(int year, int month)
-    {
-        await FetchContentsForMonthAsync(year, month);
-
-        // Query adjacent months in after current one is finished
-        var now = new DateTime(year, month, 1);
-        var prevMonth = now.AddMonths(-1);
-        var nextMonth = now.AddMonths(1);
-        var prevMonthTask = FetchContentsForMonthAsync(prevMonth.Year, prevMonth.Month);
-        var nextMonthTask = FetchContentsForMonthAsync(nextMonth.Year, nextMonth.Month);
-
-        await Task.WhenAll(prevMonthTask, nextMonthTask);                
-    }
-
-    private async Task FetchContentsForMonthAsync(int year, int month) {
-
-        // Do nothing if we have previously fetched that data
-        if (FetchedMonths.Any(x => x.year == year && x.month == month)) return;
-        
-        var fetchedData = await Http.GetFromJsonAsync<Entry[]>($"Entries?year={year}&month={month}");        
-        foreach (var entry in fetchedData)
-        {
-            Contents.Add(entry.Date.Date, entry);
-        }
-
-        // Mark as fetched
-        FetchedMonths.Add((year, month));
-    }
+    }    
 }
