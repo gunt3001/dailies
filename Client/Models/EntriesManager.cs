@@ -80,5 +80,16 @@ namespace dailies.Client.Models
             // Mark as fetched
             FetchedMonths.Add((year, month));
         }
+
+        public async Task<bool> AddOrUpdateEntryAsync(Entry entry, bool updateExisting)
+        {
+            var uri = "Entries";
+            if (updateExisting) uri += "?updateExisting=true";
+            var putResponse = await Http.PutAsJsonAsync(uri, entry);
+            if (!putResponse.IsSuccessStatusCode) return false;
+            // Update local data
+            Entries[entry.Date] = entry;
+            return true;
+        }
     }
 }

@@ -1,6 +1,16 @@
 @using Models
 
-<form>
+@if (DisplaySavingFailedAlert)
+{
+  <div class="alert alert-danger alert-dismissible" role="alert">
+    Saving failed! Please try again later.
+    <button type="button" class="close" aria-label="Close" @onclick="@(e => DisplaySavingFailedAlert = false)">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+}
+
+<form @onsubmit="@OnSubmit">
   <div class="form-group">
     <h2>@Date?.ToLongDateString()</h2>
     <small>@RelativeDateString</small>

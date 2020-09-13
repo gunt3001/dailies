@@ -58,16 +58,27 @@ namespace dailies.Server.Controllers
         }
 
         [HttpPut]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status409Conflict)]
-        public ActionResult<Entry> AddEntry(Entry newEntry)
+        [ProducesResponseType(StatusCodes.Status200OK)] // Successful update of existing entry
+        [ProducesResponseType(StatusCodes.Status400BadRequest)] // Unsuccessful update of existing entry
+        [ProducesResponseType(StatusCodes.Status201Created)] // Successful creation of new entry
+        [ProducesResponseType(StatusCodes.Status409Conflict)] // Unsuccessful creation of new entry
+        public ActionResult<Entry> AddOrUpdateEntry(Entry newEntry, bool updateExisting = false)
         {
-            if (Database.AddEntry(newEntry) == AddEntryResult.EntryExists)
+            if (updateExisting)
             {
-                return Conflict($"Entry at {newEntry.Date} already exists.");
+                var updateResult = Database.UpdateEntry(newEntry);
+                if (updateResult) return Ok();
+                return BadRequest("Update failed, entry does not exist in database.");
             }
 
-            return CreatedAtAction(nameof(GetEntries), new { date = newEntry.Date }, newEntry);
+            else {
+                var addResult = Database.AddEntry(newEntry);
+                if (addResult == AddEntryResult.EntryExists)
+                {
+                    return Conflict($"Entry at {newEntry.Date} already exists.");
+                }
+                return CreatedAtAction(nameof(GetEntries), new { date = newEntry.Date }, newEntry);
+            }            
         }
 
         private DateTime? TryParseDate(string dateString)

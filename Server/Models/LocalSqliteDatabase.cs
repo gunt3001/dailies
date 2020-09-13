@@ -55,7 +55,7 @@ namespace dailies.Server.Models
             {
                 return false;
             }
-            Db.Entries.Update(entry);
+            existingEntry.LoadContentsFrom(entry);
             Db.SaveChanges();
             return true;
         }
