@@ -51,7 +51,7 @@
     [Parameter]
     public string TdClass { get; set; }
 
-    private string LinkToEditor => $"/entry/{DateUtilities.GetShortDateForLinking(Date)}";
+    private string LinkToEditor => $"/entry/{DateUtilities.GetStandardShortDate(Date)}";
 
     private string GetDaysAgoString()
     {

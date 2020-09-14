@@ -20,7 +20,7 @@
         base.OnParametersSet();
         if (Date == null)
         {
-            NavigationManager.NavigateTo($"/entry/{DateUtilities.GetShortDateForLinking(DateTime.Today)}");
+            NavigationManager.NavigateTo($"/entry/{DateUtilities.GetStandardShortDate(DateTime.Today)}");
         }
     }
 }

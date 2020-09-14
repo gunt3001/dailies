@@ -32,9 +32,25 @@ namespace dailies.Client.Models
             }
         }
 
-        public string GetShortDateForLinking(DateTime date)
+        public string GetStandardShortDate(DateTime? date)
         {
-            return date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+            return date?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+        }
+
+        public DateTime? ParseStandardShortDate(string dateString)
+        {
+            if (dateString == null) return null;
+
+            var parseResult = DateTime.TryParseExact(
+                dateString, 
+                "yyyy-MM-dd", 
+                CultureInfo.InvariantCulture, 
+                DateTimeStyles.None, 
+                out var parsed
+            );
+
+            if (parseResult) return parsed;
+            return null;
         }
     }
 }

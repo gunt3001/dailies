@@ -19,6 +19,13 @@ namespace dailies.Client.Shared
 
         [Parameter]
         public DateTime? Date { get; set; } = DateTime.Today;
+        public string DateInputString
+        {
+            get
+            {
+                return DateUtilities.GetStandardShortDate(Date);
+            }
+        }
 
         [Parameter]
         public int MaxContentLength { get; set; } = 120;
@@ -53,7 +60,7 @@ namespace dailies.Client.Shared
         {
             if (date == null) return;
             // Re-navigate to change url and reload data
-            NavigationManager.NavigateTo($"/entry/{DateUtilities.GetShortDateForLinking(date.Value)}");
+            NavigationManager.NavigateTo($"/entry/{DateUtilities.GetStandardShortDate(date)}");
         }
 
         private void SetFormFromEntry(Entry entry)

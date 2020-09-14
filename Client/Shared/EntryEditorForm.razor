@@ -20,7 +20,8 @@
       <div class="input-group-prepend">
         <button class="btn btn-outline-secondary" type="button" @onclick="@(() => GoToDate(Date?.AddDays(-1)))">&#60;</button>
       </div>
-      <input type="date" class="form-control" id="entryDate" placeholder="Entry date" @bind="@Date">
+      <input type="date" class="form-control" id="entryDate" placeholder="Entry date" value="@DateInputString" 
+        @onchange="@((e) => GoToDate(DateUtilities.ParseStandardShortDate(e.Value.ToString())))">
       <div class="input-group-append">
         <button class="btn btn-outline-secondary" type="button" @onclick="@(() => GoToDate(Date?.AddDays(1)))">&#62;</button>
       </div>
