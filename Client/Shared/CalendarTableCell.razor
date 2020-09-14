@@ -14,7 +14,16 @@
     else
     {
         <p>@Date.Day <small>@GetDaysAgoString()</small></p>
-        <p>@Entry?.Content</p>
+        <p>
+            @if (Entry == null)
+            {
+                <i class="text-muted">No entry</i>
+            }
+            else
+            {
+                @Entry.Content
+            }
+        </p>
     }
 </td>
 
