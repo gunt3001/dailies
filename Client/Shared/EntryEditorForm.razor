@@ -1,0 +1,49 @@
+@using Models
+
+@if (DisplaySavingFailedAlert)
+{
+  <div class="alert alert-danger alert-dismissible" role="alert">
+    Saving failed! Please try again later.
+    <button type="button" class="close" aria-label="Close" @onclick="@(e => DisplaySavingFailedAlert = false)">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+}
+
+<form @onsubmit="@OnSubmitAsync">
+  <div class="form-group">
+    <h2>@Date?.ToLongDateString()</h2>
+    <small>@RelativeDateString</small>
+  </div>
+  <div class="form-group">
+    <div class="input-group">
+      <div class="input-group-prepend">
+        <button class="btn btn-outline-secondary" type="button" @onclick="@(() => GoToDate(Date?.AddDays(-1)))">&#60;</button>
+      </div>
+      <input type="date" class="form-control" id="entryDate" placeholder="Entry date" value="@DateInputString" 
+        @onchange="@((e) => GoToDate(DateUtilities.ParseStandardShortDate(e.Value.ToString())))">
+      <div class="input-group-append">
+        <button class="btn btn-outline-secondary" type="button" @onclick="@(() => GoToDate(Date?.AddDays(1)))">&#62;</button>
+      </div>
+    </div>
+  </div>
+  <div class="form-group">
+    <textarea class="form-control @(IsContentBeyondMaxLength ? "is-invalid" : "")" id="entryContent" placeholder="Say what's going on..." rows="3" @bind="@Content" @bind:event="oninput"/>
+    <small class="@(IsContentBeyondMaxLength ? "text-danger" : "")">@CurrentContentLength / @MaxContentLength</small>
+  </div>
+  <div class="form-row">
+    <div class="col">
+      <label for="entryKeyword">Keyword</label>
+      <input type="text" id="entryKeyword" class="form-control" placeholder="Keyword" @bind="@Keyword">
+    </div>
+    <div class="col">
+      <label for="entryMood">Mood</label>
+      <input type="text" id="entryMood" class="form-control" placeholder="Mood" @bind="@Mood">
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="entryRemarks">Remarks</label>
+    <textarea class="form-control" id="entryRemarks" placeholder="Remarks" rows="5" @bind="@Remarks"/>
+  </div>
+  <button type="submit" class="btn btn-primary">Save</button>
+</form>

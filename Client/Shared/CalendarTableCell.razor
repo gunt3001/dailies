@@ -1,0 +1,60 @@
+@using dailies.Shared
+@using Models
+@using System.Globalization
+
+@inject DateUtilities DateUtilities
+
+<td class="@(IsOfCurrentMonth ? "" : "text-muted") @TdClass">
+    @if (IsLoading)
+    {
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+    }
+    else
+    {
+        <p>
+            <b>
+                <a href="@LinkToEditor" class="text-dark">
+                    @Date.Day <small>@GetDaysAgoString()</small>
+                </a> 
+            </b>                       
+        </p>
+        <p>
+            @if (Entry == null)
+            {
+                <i class="text-muted">No entry</i>
+            }
+            else
+            {
+                @Entry.Content
+            }
+        </p>
+    }
+</td>
+
+@code {
+    [Parameter]
+    public DateTime Date { get; set; }
+
+    [Parameter]
+    public bool IsOfCurrentMonth { get; set; }
+
+    [Parameter]
+    public Entry Entry { get; set; }
+
+    [Parameter]
+    public bool IsLoading { get; set; }
+
+    [Parameter]
+    public string TdClass { get; set; }
+
+    private string LinkToEditor => $"/entry/{DateUtilities.GetStandardShortDate(Date)}";
+
+    private string GetDaysAgoString()
+    {
+        return $"- {DateUtilities.GetRelativeDateFromToday(Date)}";
+    }
+}
