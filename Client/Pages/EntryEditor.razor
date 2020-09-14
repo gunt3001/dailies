@@ -1,7 +1,14 @@
 @page "/entry"
+@page "/entry/{Date:datetime}"
 
 <div class="row justify-content-md-center">
     <div class="col-md-10 col-lg-7">
-        <EntryEditorForm />
+        <EntryEditorForm Date="@Date"/>
     </div>
 </div>
+
+@code
+{
+    [Parameter]
+    public DateTime? Date { get; set; }
+}

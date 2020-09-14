@@ -1,5 +1,7 @@
 @using dailies.Shared
 @using Models
+@using System.Globalization
+
 @inject DateUtilities DateUtilities;
 
 <td class="@(IsOfCurrentMonth ? "" : "text-muted") @TdClass">
@@ -13,7 +15,13 @@
     }
     else
     {
-        <p>@Date.Day <small>@GetDaysAgoString()</small></p>
+        <p>
+            <b>
+                <a href="@LinkToEditor" class="text-dark">
+                    @Date.Day <small>@GetDaysAgoString()</small>
+                </a> 
+            </b>                       
+        </p>
         <p>
             @if (Entry == null)
             {
@@ -42,6 +50,8 @@
 
     [Parameter]
     public string TdClass { get; set; }
+
+    private string LinkToEditor => $"/entry/{Date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)}";
 
     private string GetDaysAgoString()
     {
