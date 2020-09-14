@@ -13,6 +13,7 @@ namespace dailies.Client.Models
         public List<(int year, int month)> FetchedMonths { get; private set; } = new List<(int year, int month)>();
         public Dictionary<DateTime, Entry> Entries { get; private set; } = new Dictionary<DateTime, Entry>();
         public HttpClient Http { get; }
+        private List<(int year, int month)> FetchingMonths { get; set; } = new List<(int year, int month)>();
 
         public EntriesManager(HttpClient Http)
         {
@@ -68,27 +69,27 @@ namespace dailies.Client.Models
 
         private async Task FetchEntriesForMonthAsync(int year, int month)
         {
-            // Do nothing if we have previously fetched that data
-            if (FetchedMonths.Any(x => x.year == year && x.month == month)) return;
-            // Mark as fetched
+            // Do nothing if we have previously fetched or is fetching that month's data
+            if (FetchedMonths.Any(x => x.year == year && x.month == month)
+            || FetchingMonths.Any(x => x.year == year && x.month == month))
+            {
+                return;
+            }
+
+            // Mark as fetching
             // Note: there's unlikely to be a race condition here since WASM is single-threaded.
             var marker = (year, month);
-            FetchedMonths.Add(marker);
+            FetchingMonths.Add(marker);
 
-            try
+            var fetchedData = await Http.GetFromJsonAsync<Entry[]>($"Entries?year={year}&month={month}");
+            foreach (var entry in fetchedData)
             {
-                var fetchedData = await Http.GetFromJsonAsync<Entry[]>($"Entries?year={year}&month={month}");
-                foreach (var entry in fetchedData)
-                {
-                    Entries[entry.Date.Date] = entry;
-                }
+                Entries[entry.Date.Date] = entry;
             }
-            catch (Exception)
-            {
-                // Unset data flag
-                FetchedMonths.Remove(marker);
-                Console.WriteLine("Warning: Entries data fetch failed.");
-            }
+
+            // Remove fetching flag, set fetched flag.
+            FetchedMonths.Add(marker);
+            FetchingMonths.Remove(marker);
         }
 
         public async Task<bool> AddOrUpdateEntryAsync(Entry entry, bool updateExisting)
