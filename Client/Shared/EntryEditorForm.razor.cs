@@ -17,25 +17,11 @@ namespace dailies.Client.Shared
         [Inject]
         private NavigationManager NavigationManager { get; set; }
 
-        private DateTime? _date = DateTime.Today;
         [Parameter]
-        public DateTime? Date
-        {
-            get
-            {
-                return _date;
-            }
-            set
-            {
-                _date = value;
-                if (value != null)
-                {
-                    // On date change, load entry
-                    var entry = EntriesManager.GetEntryAsync(value.Value).Result;
-                    SetFormFromEntry(entry);
-                }
-            }
-        }
+        public DateTime? Date { get; set; } = DateTime.Today;
+
+        [Parameter]
+        public int MaxContentLength { get; set; } = 120;
 
         private bool DisplaySavingFailedAlert { get; set; } = false;
 
@@ -51,16 +37,28 @@ namespace dailies.Client.Shared
 
         private int CurrentContentLength => Content?.Length ?? 0;
         private bool IsContentBeyondMaxLength => CurrentContentLength > MaxContentLength;
-
-        [Parameter]
-        public int MaxContentLength { get; set; } = 120;
-
         private string RelativeDateString => Date == null ? null : DateUtilities.GetRelativeDateFromToday(Date.Value);
 
-        private void MoveDate(int offset)
+        protected override async Task OnParametersSetAsync()
+        {
+            // Trigger data fetch when parameters change
+            await OnDateChangeAsync();
+        }
+
+        private async Task MoveDateAsync(int offset)
         {
             if (Date == null) return;
             Date = Date.Value.AddDays(offset);
+            await OnDateChangeAsync();
+        }
+
+        private async Task OnDateChangeAsync()
+        {
+            if (Date == null) return;
+
+            // On date change, load entry
+            var entry = await EntriesManager.GetEntryAsync(Date.Value);
+            SetFormFromEntry(entry);
         }
 
         private void SetFormFromEntry(Entry entry)
@@ -72,7 +70,7 @@ namespace dailies.Client.Shared
             IsEditingExistingEntry = entry != null;
         }
 
-        private async Task OnSubmit()
+        private async Task OnSubmitAsync()
         {
             var saveChangesResult = await SaveChangesAsync();
             if (!saveChangesResult)
