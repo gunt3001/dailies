@@ -2,7 +2,7 @@
 @using Models
 @inject DateUtilities DateUtilities;
 
-<td class="@(IsOfCurrentMonth ? "" : "text-muted")">
+<td class="@(IsOfCurrentMonth ? "" : "text-muted") @TdClass">
     @if (IsLoading)
     {
         <div class="d-flex justify-content-center">
@@ -39,6 +39,9 @@
 
     [Parameter]
     public bool IsLoading { get; set; }
+
+    [Parameter]
+    public string TdClass { get; set; }
 
     private string GetDaysAgoString()
     {

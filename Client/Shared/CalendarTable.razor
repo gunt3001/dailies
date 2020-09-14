@@ -29,7 +29,14 @@
                             var isOfCurrentMonth = date.Year == CurrentYear && date.Month == CurrentMonth;
                             var entry = GetEntryForDate(date);
                             var dataLoaded = FetchedMonths.Any(x => x.year == CurrentYear && x.month == CurrentMonth);
-                            <CalendarTableCell Date="@date" IsOfCurrentMonth="@isOfCurrentMonth" Entry="@entry" IsLoading="@(!dataLoaded)"/>
+                            var isWeekend = i == 0 || i == 6;
+                            <CalendarTableCell 
+                                Date="@date" 
+                                IsOfCurrentMonth="@isOfCurrentMonth" 
+                                Entry="@entry" 
+                                IsLoading="@(!dataLoaded)" 
+                                TdClass="@(isWeekend ? "table-light" : "")"
+                            />
                         }
                     </tr>
                     dayToDisplay = dayToDisplay.AddDays(7);
