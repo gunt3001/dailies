@@ -2,7 +2,7 @@
 @using Models
 @inject DateUtilities DateUtilities;
 
-<td class="@(IsOfCurrentMonth ? "" : "text-black-50")">
+<td class="@(IsOfCurrentMonth ? "" : "text-muted")">
     @if (IsLoading)
     {
         <div class="d-flex justify-content-center">
