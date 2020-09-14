@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 
 namespace dailies.Client.Models
 {
@@ -29,6 +30,11 @@ namespace dailies.Client.Models
                 default:
                     return null;
             }
+        }
+
+        public string GetShortDateForLinking(DateTime date)
+        {
+            return date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
         }
     }
 }

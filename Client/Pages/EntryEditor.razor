@@ -1,5 +1,8 @@
 @page "/entry"
 @page "/entry/{Date:datetime}"
+@using dailies.Client.Models
+@inject NavigationManager NavigationManager
+@inject DateUtilities DateUtilities
 
 <div class="row justify-content-md-center">
     <div class="col-md-10 col-lg-7">
@@ -11,4 +14,14 @@
 {
     [Parameter]
     public DateTime? Date { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        if (Date == null)
+        {
+            NavigationManager.NavigateTo($"/entry/{DateUtilities.GetShortDateForLinking(DateTime.Today)}");
+        }
+    }
 }
+

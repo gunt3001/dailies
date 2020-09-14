@@ -42,23 +42,18 @@ namespace dailies.Client.Shared
         protected override async Task OnParametersSetAsync()
         {
             // Trigger data fetch when parameters change
-            await OnDateChangeAsync();
+            if (Date != null)
+            {
+                var entry = await EntriesManager.GetEntryAsync(Date.Value);
+                SetFormFromEntry(entry);
+            }            
         }
 
-        private async Task MoveDateAsync(int offset)
+        private void GoToDate(DateTime? date)
         {
-            if (Date == null) return;
-            Date = Date.Value.AddDays(offset);
-            await OnDateChangeAsync();
-        }
-
-        private async Task OnDateChangeAsync()
-        {
-            if (Date == null) return;
-
-            // On date change, load entry
-            var entry = await EntriesManager.GetEntryAsync(Date.Value);
-            SetFormFromEntry(entry);
+            if (date == null) return;
+            // Re-navigate to change url and reload data
+            NavigationManager.NavigateTo($"/entry/{DateUtilities.GetShortDateForLinking(date.Value)}");
         }
 
         private void SetFormFromEntry(Entry entry)
