@@ -79,7 +79,7 @@ namespace dailies.Client.Shared
             }
 
             // Rediect to calendar view on success
-            NavigationManager.NavigateTo("/calendar");
+            NavigationManager.NavigateTo("/");
         }
 
         private async Task<bool> SaveChangesAsync()
