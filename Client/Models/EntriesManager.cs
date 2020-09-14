@@ -70,15 +70,25 @@ namespace dailies.Client.Models
         {
             // Do nothing if we have previously fetched that data
             if (FetchedMonths.Any(x => x.year == year && x.month == month)) return;
-
-            var fetchedData = await Http.GetFromJsonAsync<Entry[]>($"Entries?year={year}&month={month}");
-            foreach (var entry in fetchedData)
-            {
-                Entries.Add(entry.Date.Date, entry);
-            }
-
             // Mark as fetched
-            FetchedMonths.Add((year, month));
+            // Note: there's unlikely to be a race condition here since WASM is single-threaded.
+            var marker = (year, month);
+            FetchedMonths.Add(marker);
+
+            try
+            {
+                var fetchedData = await Http.GetFromJsonAsync<Entry[]>($"Entries?year={year}&month={month}");
+                foreach (var entry in fetchedData)
+                {
+                    Entries[entry.Date.Date] = entry;
+                }
+            }
+            catch (Exception)
+            {
+                // Unset data flag
+                FetchedMonths.Remove(marker);
+                Console.WriteLine("Warning: Entries data fetch failed.");
+            }
         }
 
         public async Task<bool> AddOrUpdateEntryAsync(Entry entry, bool updateExisting)
