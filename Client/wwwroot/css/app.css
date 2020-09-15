@@ -97,10 +97,6 @@ app {
                 color: white;
             }
 
-.content {
-    padding-top: 1.1rem;
-}
-
 .navbar-toggler {
     background-color: rgba(255, 255, 255, 0.1);
 }
@@ -148,6 +144,16 @@ app {
     .main .top-row a, .main .top-row .btn-link {
         margin-left: 0;
     }
+
+    table.calendar-table td, table.calendar-table th {
+        /* Reduce table padding on small screens */
+        padding: .3rem;
+
+        /* Forcefully break word */
+        overflow-wrap: anywhere;
+    }
+
+
 }
 
 @media (min-width: 768px) {
@@ -180,10 +186,11 @@ app {
         /* Never collapse the sidebar for wide screens */
         display: block;
     }
+    
 }
 
 .calendar .command-bar input, .calendar .command-bar select {
-    font-size: 3em;
+    font-size: min(5vw, 3em);
 }
 
 table.calendar-table {
@@ -193,5 +200,6 @@ table.calendar-table {
 
 table.calendar-table tbody tr {
     height: 8em;
-    font-size: min(1vw, 1em);
+    font-size: max(min(1vw, 1em), 0.6em);
 }
+
