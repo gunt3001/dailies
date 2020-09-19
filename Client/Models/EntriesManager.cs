@@ -29,13 +29,16 @@ namespace dailies.Client.Models
             {
                 return GetEntryOrNull(date);
             }
-            else
+
+            // Delay if data is being fetched
+            while (FetchingMonths.Any(x => x.month == date.Month && x.year == date.Year))
             {
-                // Data not fetched yet.
-                // Fetch and return
-                await FetchEntriesForMonthAsync(date.Year, date.Month);
-                return GetEntryOrNull(date);
+                await Task.Delay(500);
             }
+
+            // Fetch and return
+            await FetchEntriesForMonthAsync(date.Year, date.Month);
+            return GetEntryOrNull(date);
         }
 
         private Entry GetEntryOrNull(DateTime date)
