@@ -7,68 +7,70 @@
 <div class="row">
     <div class="col">
         <div class="pt-3">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Day</th>
-                        <th>Content</th>
-                        <th>Keyword</th>
-                        <th>Mood</th>
-                        <th>Remarks</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if (Entries == null)
-                    {
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
                         <tr>
-                            <td colspan="6" class="text-center">
-                                <div class="spinner-border" role="status">
-                                    <span class="sr-only">Loading...</span>
-                                </div>
-                            </td>
+                            <th>Date</th>
+                            <th>Day</th>
+                            <th>Content</th>
+                            <th>Keyword</th>
+                            <th>Mood</th>
+                            <th>Remarks</th>
                         </tr>
-                    }
-                    else if (Entries.Count == 0)
-                    {
-                        <tr>
-                            <td colspan="6" class="text-center">
-                                No entries found in current month. Try loading more.
-                            </td>
-                        </tr>
-                    }
-                    else
-                    {
-                        foreach (var entry in Entries)
+                    </thead>
+                    <tbody>
+                        @if (Entries == null)
                         {
                             <tr>
-                                <td>
-                                    <a href="@($"/entry/{DateUtilities.GetStandardShortDate(entry.date)}")" class="text-dark">
-                                        <span>@entry.date.ToShortDateString()</span><br />
-                                        <i>@DateUtilities.GetRelativeDateFromToday(entry.date.Date)</i>
-                                    </a>
-                                    
+                                <td colspan="6" class="text-center">
+                                    <div class="spinner-border" role="status">
+                                        <span class="sr-only">Loading...</span>
+                                    </div>
                                 </td>
-                                <td>@entry.date.ToString("ddd")</td>
-                                <td>
-                                    @if (entry.entry == null)
-                                    {
-                                        <i class="text-muted">No entry</i>
-                                    }
-                                    else
-                                    {
-                                        @entry.entry.Content
-                                    }
-                                </td>
-                                <td>@entry.entry?.Keyword</td>
-                                <td>@entry.entry?.Mood</td>
-                                <td class="preserve-linebreak">@entry.entry?.Remarks</td>
                             </tr>
                         }
-                    }
-                    
-                </tbody>
-            </table>
+                        else if (Entries.Count == 0)
+                        {
+                            <tr>
+                                <td colspan="6" class="text-center">
+                                    No entries found in current month. Try loading more.
+                                </td>
+                            </tr>
+                        }
+                        else
+                        {
+                            foreach (var entry in Entries)
+                            {
+                                <tr>
+                                    <td>
+                                        <a href="@($"/entry/{DateUtilities.GetStandardShortDate(entry.date)}")" class="text-dark">
+                                            <span>@entry.date.ToShortDateString()</span><br />
+                                            <i>@DateUtilities.GetRelativeDateFromToday(entry.date.Date)</i>
+                                        </a>
+                                        
+                                    </td>
+                                    <td>@entry.date.ToString("ddd")</td>
+                                    <td>
+                                        @if (entry.entry == null)
+                                        {
+                                            <i class="text-muted">No entry</i>
+                                        }
+                                        else
+                                        {
+                                            @entry.entry.Content
+                                        }
+                                    </td>
+                                    <td>@entry.entry?.Keyword</td>
+                                    <td>@entry.entry?.Mood</td>
+                                    <td class="preserve-linebreak">@entry.entry?.Remarks</td>
+                                </tr>
+                            }
+                        }
+                        
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
