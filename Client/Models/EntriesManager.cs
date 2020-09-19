@@ -96,11 +96,20 @@ namespace dailies.Client.Models
         {
             var uri = "Entries";
             if (updateExisting) uri += "?updateExisting=true";
-            var putResponse = await Http.PutAsJsonAsync(uri, entry);
-            if (!putResponse.IsSuccessStatusCode) return false;
-            // Update local data
-            Entries[entry.Date] = entry;
-            return true;
+            try
+            {
+                var putResponse = await Http.PutAsJsonAsync(uri, entry);
+                if (!putResponse.IsSuccessStatusCode) return false;
+                // Update local data
+                Entries[entry.Date] = entry;
+                return true;
+            }
+            // Since PutAsJsonAsync Method calls Javascript fetch, 
+            // when it fails, the exception thrown is a generic one
+            catch (Exception)
+            {
+                return false;
+            }
         }
     }
 }

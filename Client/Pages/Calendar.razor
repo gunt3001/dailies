@@ -9,7 +9,7 @@
     <div class="command-bar">
         <div class="form-row">
             <div class="col-auto">
-                <button type="button" class="btn btn-light btn-lg mt-3" @onclick="@(e => currentMonth--)">&#60;</button>
+                <button type="button" class="btn btn-light btn-lg mt-sm-3" @onclick="@(e => currentMonth--)">&#60;</button>
             </div>
             <div class="col">
                 <input type="number" class="header form-control-plaintext font-weight-bolder" id="calendar-year" @bind="@currentYear">
@@ -24,7 +24,7 @@
                 </select>
             </div>
             <div class="col-auto">
-                <button type="button" class="btn btn-light btn-lg mt-3" @onclick="@(e => currentMonth++)">&#62;</button>
+                <button type="button" class="btn btn-light btn-lg mt-sm-3" @onclick="@(e => currentMonth++)">&#62;</button>
             </div>
         </div>
     </div>

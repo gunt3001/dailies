@@ -31,6 +31,7 @@ namespace dailies.Client.Shared
         public int MaxContentLength { get; set; } = 120;
 
         private bool DisplaySavingFailedAlert { get; set; } = false;
+        private bool IsSubmitting { get; set; } = false;
 
         // Entry details (excluding the date)
         private string Content { get; set; }
@@ -74,6 +75,9 @@ namespace dailies.Client.Shared
 
         private async Task OnSubmitAsync()
         {
+            // Disable submit button
+            IsSubmitting = true;
+
             var saveChangesResult = await SaveChangesAsync();
             if (!saveChangesResult)
             {

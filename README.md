@@ -10,9 +10,9 @@ Deploy and run this applicaton using the .NET Core SDK, then browse using your b
 
 The application primarily uses Sqlite as its backend database. Excel spreadsheet backend is also supported in a limited fashion (read-only).
 
-## Remarks
+## For Educational Purposes Only!
 
-I created this project to learn more about Microsoft's Blazor Webassembly technology, which is still in its infancy, but is an exciting new way to develop web-based applications.
+I created this project to learn more about Microsoft's Blazor Webassembly technology. The application contains **no authentication whatsoever**, meaning once deployed anyone can read/write data.
 
 ## License
 
