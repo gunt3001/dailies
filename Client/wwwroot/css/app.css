@@ -203,3 +203,6 @@ table.calendar-table tbody tr {
     font-size: max(min(1vw, 1em), 0.6em);
 }
 
+.preserve-linebreak {
+    white-space: pre-line;
+}
