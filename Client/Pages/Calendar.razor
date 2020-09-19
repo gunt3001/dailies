@@ -5,33 +5,37 @@
 
 @inject EntriesManager EntriesManager
 
-<div class="calendar">
-    <div class="command-bar">
-        <div class="form-row">
-            <div class="col-auto">
-                <button type="button" class="btn btn-light btn-lg mt-sm-3" @onclick="@(e => currentMonth--)">&#60;</button>
+<div class="row justify-content-center">
+    <div class="col-xl-10">
+        <div class="calendar">
+            <div class="command-bar">
+                <div class="form-row">
+                    <div class="col-auto">
+                        <button type="button" class="btn btn-light btn-lg mt-sm-3" @onclick="@(e => currentMonth--)">&#60;</button>
+                    </div>
+                    <div class="col">
+                        <input type="number" class="header form-control-plaintext font-weight-bolder" id="calendar-year" @bind="@currentYear">
+                    </div>
+                    <div class="col">
+                        <select id="inputState" class="form-control-plaintext" @bind="@currentMonth">
+                            @for (int i = 1; i <= 12; i++)
+                            {
+                                var name = DateTimeFormatInfo.CurrentInfo.GetMonthName(i);
+                                <option value="@i">@name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-auto">
+                        <button type="button" class="btn btn-light btn-lg mt-sm-3" @onclick="@(e => currentMonth++)">&#62;</button>
+                    </div>
+                </div>
             </div>
-            <div class="col">
-                <input type="number" class="header form-control-plaintext font-weight-bolder" id="calendar-year" @bind="@currentYear">
-            </div>
-            <div class="col">
-                <select id="inputState" class="form-control-plaintext" @bind="@currentMonth">
-                    @for (int i = 1; i <= 12; i++)
-                    {
-                        var name = DateTimeFormatInfo.CurrentInfo.GetMonthName(i);
-                        <option value="@i">@name</option>
-                    }
-                </select>
-            </div>
-            <div class="col-auto">
-                <button type="button" class="btn btn-light btn-lg mt-sm-3" @onclick="@(e => currentMonth++)">&#62;</button>
+
+            <div>
+                <CalendarTable CurrentMonth="@currentMonth" CurrentYear="@currentYear" Contents="@EntriesManager.Entries" FetchedMonths="@EntriesManager.FetchedMonths" />
             </div>
         </div>
-    </div>
-
-    <div>
-        <CalendarTable CurrentMonth="@currentMonth" CurrentYear="@currentYear" Contents="@EntriesManager.Entries" FetchedMonths="@EntriesManager.FetchedMonths" />
-    </div>
+    </div>            
 </div>
 
 @code {
