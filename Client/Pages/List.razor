@@ -42,7 +42,7 @@
                         {
                             foreach (var entry in Entries)
                             {
-                                <tr>
+                                <tr @key="@entry.date">
                                     <td>
                                         <a href="@($"/entry/{DateUtilities.GetStandardShortDate(entry.date)}")" class="text-dark">
                                             <span>@entry.date.ToShortDateString()</span><br />
