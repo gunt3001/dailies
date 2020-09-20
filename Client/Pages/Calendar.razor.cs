@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using dailies.Client.Models;
 using Microsoft.AspNetCore.Components;
 
-namespace dailies.Client.Shared
+namespace dailies.Client.Pages
 {
     public partial class Calendar
     {
