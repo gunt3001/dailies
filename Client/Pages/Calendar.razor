@@ -1,9 +1,5 @@
 ﻿@page "/"
 @using System.Globalization
-@using dailies.Shared
-@using Models
-
-@inject EntriesManager EntriesManager
 
 <div class="row justify-content-center">
     <div class="col-xl-10">
@@ -11,13 +7,19 @@
             <div class="command-bar">
                 <div class="form-row">
                     <div class="col-auto">
-                        <button type="button" class="btn btn-light btn-lg mt-sm-3" @onclick="@(e => currentMonth--)">&#60;</button>
+                        <button type="button" class="btn btn-light btn-lg mt-sm-3" @onclick="@DecrementMonthAsync">&#60;</button>
                     </div>
                     <div class="col">
-                        <input type="number" class="header form-control-plaintext font-weight-bolder" id="calendar-year" @bind="@currentYear">
+                        <input type="number" class="header form-control-plaintext font-weight-bolder" id="calendar-year"
+                            value="@CurrentYear" 
+                            @onchange="@(async e => await SetCurrentYearAsync(e.Value))"
+                        >
                     </div>
                     <div class="col">
-                        <select id="inputState" class="form-control-plaintext" @bind="@currentMonth">
+                        <select id="inputState" class="form-control-plaintext" 
+                            value="@CurrentMonth"
+                            @onchange="@(async e => await SetCurrentMonthAsync(e.Value))"
+                        >
                             @for (int i = 1; i <= 12; i++)
                             {
                                 var name = DateTimeFormatInfo.CurrentInfo.GetMonthName(i);
@@ -26,57 +28,15 @@
                         </select>
                     </div>
                     <div class="col-auto">
-                        <button type="button" class="btn btn-light btn-lg mt-sm-3" @onclick="@(e => currentMonth++)">&#62;</button>
+                        <button type="button" class="btn btn-light btn-lg mt-sm-3" @onclick="@IncrementMonthAsync">&#62;</button>
                     </div>
                 </div>
             </div>
 
             <div>
-                <CalendarTable CurrentMonth="@currentMonth" CurrentYear="@currentYear" Contents="@EntriesManager.Entries" FetchedMonths="@EntriesManager.FetchedMonths" />
+                <CalendarTable CurrentMonth="@CurrentMonth" CurrentYear="@CurrentYear" Contents="@EntriesManager.Entries" FetchedMonths="@EntriesManager.FetchedMonths" />
             </div>
         </div>
     </div>            
 </div>
 
-@code {
-    private int _currentYear = 0;
-    private int currentYear {
-        get {
-            return _currentYear;
-        }
-        set {
-            _currentYear = value;
-            TriggerCalendarUpdateAsync();
-        }
-    }
-    private int _currentMonth = 0;
-    private int currentMonth { 
-        get {
-            return _currentMonth;
-        }
-        set {
-            _currentMonth = value;
-            if (_currentMonth == 13) {
-                _currentYear += 1;
-                _currentMonth = 1;
-            }
-            else if (_currentMonth == 0 && _currentYear != 0) {
-                _currentYear -= 1;
-                _currentMonth = 12;
-            }
-            TriggerCalendarUpdateAsync();
-        }
-     }
-
-    protected override async Task OnInitializedAsync()
-    {
-        currentYear = DateTime.Today.Year;
-        currentMonth = DateTime.Today.Month;
-    }
-
-    private async Task TriggerCalendarUpdateAsync() {
-        if (currentYear == 0 || currentMonth == 0) return;
-        await EntriesManager.FetchEntriesToDisplayForMonthAsync(currentYear, currentMonth);
-        StateHasChanged();
-    }    
-}
