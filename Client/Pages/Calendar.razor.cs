@@ -10,21 +10,9 @@ namespace dailies.Client.Pages
         [Inject]
         private EntriesManager EntriesManager { get; set; }
 
-        private int _currentYear = 0;
-        private int currentYear
-        {
-            get
-            {
-                return _currentYear;
-            }
-            set
-            {
-                _currentYear = value;
-                TriggerCalendarUpdateAsync();
-            }
-        }
+        private int CurrentYear { get; set; }
         private int _currentMonth = 0;
-        private int currentMonth
+        private int CurrentMonth
         {
             get
             {
@@ -35,30 +23,61 @@ namespace dailies.Client.Pages
                 _currentMonth = value;
                 if (_currentMonth == 13)
                 {
-                    _currentYear += 1;
+                    CurrentYear += 1;
                     _currentMonth = 1;
                 }
-                else if (_currentMonth == 0 && _currentYear != 0)
+                else if (_currentMonth == 0 && CurrentYear != 0)
                 {
-                    _currentYear -= 1;
+                    CurrentYear -= 1;
                     _currentMonth = 12;
                 }
-                TriggerCalendarUpdateAsync();
             }
         }
 
         protected override async Task OnInitializedAsync()
         {
-            currentYear = DateTime.Today.Year;
-            currentMonth = DateTime.Today.Month;
+            CurrentYear = DateTime.Today.Year;
+            CurrentMonth = DateTime.Today.Month;
+            await TriggerCalendarUpdateAsync();
         }
 
         private async Task TriggerCalendarUpdateAsync()
         {
-            if (currentYear == 0 || currentMonth == 0) return;
-            await EntriesManager.FetchEntriesToDisplayForMonthAsync(currentYear, currentMonth);
+            if (CurrentYear == 0 || CurrentMonth == 0) return;
+            await EntriesManager.FetchEntriesToDisplayForMonthAsync(CurrentYear, CurrentMonth);
             StateHasChanged();
         }
 
+        private async Task SetCurrentMonthAsync(object month)
+        {
+            if (month == null || !(int.TryParse((string)month, out var parsedMonth)))
+            {
+                return;
+            }
+            CurrentMonth = parsedMonth;
+            await TriggerCalendarUpdateAsync();
+        }
+
+        private async Task SetCurrentYearAsync(object year)
+        {
+            if (year == null || !(int.TryParse((string)year, out var parsedYear)))
+            {
+                return;
+            }
+            CurrentYear = parsedYear;
+            await TriggerCalendarUpdateAsync();
+        }
+
+        private async Task DecrementMonthAsync()
+        {
+            CurrentMonth--;
+            await TriggerCalendarUpdateAsync();
+        }
+
+        private async Task IncrementMonthAsync()
+        {
+            CurrentMonth++;
+            await TriggerCalendarUpdateAsync();
+        }
     }
 }
