@@ -48,6 +48,14 @@ namespace dailies.Server.Models
             return Db.Entries.Find(date);
         }
 
+        public Entry GetRandomEntry()
+        {
+            var allValidEntries = Db.Entries.Where(x => x.Content != null && x.Content != "");
+            var validEntriesCount = allValidEntries.Count();
+            var randomEntryIndex = new Random().Next(0, validEntriesCount);
+            return allValidEntries.Skip(randomEntryIndex).FirstOrDefault();
+        }
+
         public bool UpdateEntry(Entry entry)
         {
             var existingEntry = GetEntry(entry.Date);

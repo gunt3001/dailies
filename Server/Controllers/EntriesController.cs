@@ -39,6 +39,20 @@ namespace dailies.Server.Controllers
         }
 
         [HttpGet]
+        [Route("random")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<Entry> GetRandomEntry()
+        {
+            var randomEntry = Database.GetRandomEntry();
+            if (randomEntry == null)
+            {
+                return NotFound();
+            }
+            return Ok(randomEntry);
+        }
+
+        [HttpGet]
         [Route("")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
