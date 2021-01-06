@@ -49,6 +49,16 @@ namespace dailies.Server.Models
             return null;
         }
 
+        public Entry GetRandomEntry()
+        {
+            using var table = new ExcelWorksheetWrapper(Path, Worksheet, TableName);
+            var rows = table.EnumerateRows().ToList();
+            var rowCount = rows.Count;
+            var randomRowIndex = new Random().Next(0, rowCount);
+            var dateCell = table.GetCellValue(randomRowIndex, table.DateColIndex);
+            return CreateEntryAtRowIndex(table, (DateTime)dateCell, randomRowIndex);
+        }
+
         public IEnumerable<Entry> GetEntries(DateTime startDate, DateTime endDate)
         {
             using var table = new ExcelWorksheetWrapper(Path, Worksheet, TableName);

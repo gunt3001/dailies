@@ -55,6 +55,12 @@ namespace dailies.Client.Models
             }
         }
 
+        public async Task<Entry> GetRandomEntryAsync()
+        {
+            var randomEntry = await Http.GetFromJsonAsync<Entry>($"Entries/random");
+            return randomEntry;
+        }
+
         /// Fetch data for given month and adjacent ones
         public async Task FetchEntriesToDisplayForMonthAsync(int year, int month)
         {

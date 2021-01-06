@@ -34,7 +34,7 @@
                         {
                             <tr>
                                 <td colspan="6" class="text-center">
-                                    No entries found in current month. Try loading more.
+                                    No entries found in current year. Try loading more.
                                 </td>
                             </tr>
                         }
@@ -83,13 +83,13 @@
 
 @code
 {
-    private DateTime OldestDisplayedMonth { get; set; }
+    private int OldestDisplayedYear { get; set; }
     private List<(DateTime date, Entry entry)> Entries { get; set; }
     private bool IsLoading { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        OldestDisplayedMonth = DateTime.Today;
+        OldestDisplayedYear = DateTime.Today.Year;
         await DisplayEntriesAsync();
     }
 
@@ -100,20 +100,17 @@
         var newEntries = new List<(DateTime date, Entry entry)>();
         var hasPreviousValidEntry = Entries != null && Entries.Any(x => x.entry != null);
 
-        // Get data for each day in current month
-        for (var day = DateTime.DaysInMonth(OldestDisplayedMonth.Year, OldestDisplayedMonth.Month); day > 0; day--)
+        // Get data for each day in current year
+        foreach (var day in EnumerateDaysInYearBackwards(OldestDisplayedYear))
         {
-            var dateForEntry = new DateTime(OldestDisplayedMonth.Year, OldestDisplayedMonth.Month, day);
-            var entry = await EntriesManager.GetEntryAsync(dateForEntry);
-
+            var entry = await EntriesManager.GetEntryAsync(day);
             if (entry == null && !hasPreviousValidEntry)
             {
                 // Skip adding valid entry if we don't have any entry in the list yet
                 // This will prevent empty entries appearing on top.
                 continue;
             }
-
-            newEntries.Add((dateForEntry, entry));
+            newEntries.Add((day, entry));
         }
 
         if (Entries == null)
@@ -127,10 +124,20 @@
         IsLoading = false;
     }
 
+    private IEnumerable<DateTime> EnumerateDaysInYearBackwards(int year)
+    {
+        var day = new DateTime(year, 12, 31);
+        while (day.Year == year)
+        {
+            yield return day;
+            day = day.AddDays(-1);
+        }
+    }
+
     private async Task OnLoadMoreClick()
     {
         if (IsLoading) return;
-        OldestDisplayedMonth = OldestDisplayedMonth.AddMonths(-1);
+        OldestDisplayedYear -= 1;
         await DisplayEntriesAsync();
     }
 }

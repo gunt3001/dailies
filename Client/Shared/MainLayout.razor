@@ -1,4 +1,8 @@
 ﻿@inherits LayoutComponentBase
+@using dailies.Client.Models
+@using dailies.Shared
+@inject EntriesManager EntriesManager
+@inject DateUtilities DateUtilities
 
 <div class="sidebar">
     <NavMenu />
@@ -6,10 +10,41 @@
 
 <div class="main">
     <div class="top-row px-4">
-        <em class="text-muted">Time waits for no one.</em>
+        @if (RandomEntry != null)
+        {
+            <a href="@LinkToRandomEntry">
+                <em class="text-muted">
+                    @RandomEntry.Content — @DateUtilities.GetRelativeDateFromToday(RandomEntry.Date)
+                </em>
+            </a>
+            <button type="button" class="btn btn-outline-secondary btn-sm ml-2" @onclick="@GetNewRandomEntryAsync">
+                <span class="oi oi-reload" aria-hidden="true"></span>
+            </button>
+        }
+        else
+        {
+            <em class="text-muted">Time waits for no one.</em>
+        }
+
     </div>
 
     <div class="container-fluid px-sm-4">
         @Body
     </div>
 </div>
+
+@code
+{
+    private Entry RandomEntry { get; set; }
+    private string LinkToRandomEntry => $"/entry/{DateUtilities.GetStandardShortDate(RandomEntry.Date)}";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetNewRandomEntryAsync();
+    }
+
+    private async Task GetNewRandomEntryAsync()
+    {
+        RandomEntry = await EntriesManager.GetRandomEntryAsync();
+    }
+}
