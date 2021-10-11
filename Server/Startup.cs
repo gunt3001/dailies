@@ -4,7 +4,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using dailies.Server.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace dailies.Server
 {
@@ -55,10 +54,6 @@ namespace dailies.Server
                 endpoints.MapControllers();
                 endpoints.MapFallbackToFile("index.html");
             });
-
-            using (var scope = app.ApplicationServices.CreateScope())
-            using (var context = scope.ServiceProvider.GetService<EntriesContext>())
-                context.Database.Migrate();
         }
     }
 }
