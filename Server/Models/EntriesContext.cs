@@ -1,11 +1,12 @@
 using dailies.Shared;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace dailies.Server.Models
 {
     public class EntriesContext : DbContext
     {
-        private const string DatabaseFileName = "dailies.sqlite";
+        private static readonly string DatabaseFileName = Environment.GetEnvironmentVariable("DB_FILE") ?? "dailies.sqlite";
 
         public DbSet<Entry> Entries { get; set; }
 
