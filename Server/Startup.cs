@@ -55,10 +55,6 @@ namespace dailies.Server
                 endpoints.MapControllers();
                 endpoints.MapFallbackToFile("index.html");
             });
-
-            using (var scope = app.ApplicationServices.CreateScope())
-            using (var context = scope.ServiceProvider.GetService<EntriesContext>())
-                context.Database.Migrate();
         }
     }
 }
